@@ -20,6 +20,9 @@ use crate::{events::client::EventV1, util::{
 #[cfg(feature = "tasks")]
 use crate::tasks::{self, ack::AckEvent};
 
+/// Number of reactors resolved per emoji when including users alongside messages
+const REACTION_USERS_LIMIT: usize = 3;
+
 auto_derived_partial!(
     /// Message
     pub struct Message {
@@ -886,6 +889,16 @@ impl Message {
                             v0::SystemMessage::CallStarted { by, .. } => users.push(by.clone()),
                         }
                     }
+
+                    // Include the first few people to react with each emoji so that
+                    // clients can render reactions without another round trip
+                    users.extend(
+                        m.reactions
+                            .values()
+                            .flat_map(|reactors| reactors.iter().take(REACTION_USERS_LIMIT))
+                            .cloned(),
+                    );
+
                     users
                 })
                 .collect::<HashSet<String>>()

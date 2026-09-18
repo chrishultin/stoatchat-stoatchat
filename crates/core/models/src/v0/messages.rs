@@ -309,6 +309,9 @@ auto_derived!(
         #[cfg_attr(feature = "validator", validate(length(min = 26, max = 26)))]
         pub nearby: Option<String>,
         /// Whether to include user (and member, if server channel) objects
+        ///
+        /// This covers message authors, users referenced by system messages and
+        /// the first few people to react with each emoji.
         pub include_users: Option<bool>,
     }
 
@@ -338,6 +341,9 @@ auto_derived!(
         #[cfg_attr(feature = "serde", serde(default = "MessageSort::default"))]
         pub sort: MessageSort,
         /// Whether to include user (and member, if server channel) objects
+        ///
+        /// This covers message authors, users referenced by system messages and
+        /// the first few people to react with each emoji.
         pub include_users: Option<bool>,
     }
 
